@@ -1,37 +1,300 @@
 /* ====== À PERSONNALISER ====== */
 const WHATSAPP = "221770000000";            // numéro de la marque, format international sans +
 const DEVISE = "FCFA";
-const HERO_IMG = "";                         // ex. "img/hero.jpg"
-const LOOKBOOK = [{titre:"Les hoodies",img:""},{titre:"Les t-shirts graffiti",img:""},{titre:"Le jogging noir",img:""}];
+const BANDEAU = "Livraison à Dakar · Paiement Wave, Orange Money ou à la livraison";
+const HERO_IMG = "assets/produits/silence-work-hero-3.jpg";                         // ex. "assets/produits/hero.jpg"
+const HERO_COLS = [
+  "assets/produits/silence-work-hero-1.jpg",
+  "assets/produits/silence-work-hero-3.jpg",
+  "assets/produits/silence-work-hero-2.jpg"
+];
+const LOOKBOOK = [
+ {
+  "titre": "Les hoodies",
+  "img": ""
+ },
+ {
+  "titre": "Les t-shirts graffiti",
+  "img": ""
+ },
+ {
+  "titre": "Le jogging noir",
+  "img": ""
+ }
+];
 const TAILLES = ["S","M","L","XL","XXL"];
 /* Chaque produit a des couleurs. Pour chaque couleur, "img" = liste de tes photos
-   (face, dos, détail, porté, autre fond…), ex. img:["img/noir-1.jpg","img/noir-2.jpg"].
+   (face, dos, détail, porté, autre fond…), ex. img:["assets/produits/noir-1.jpg"].
    Vide = vues dessinées automatiquement (face, dos, détail, ambiance).
    ancien = prix initial barré (promo) · epuise:1 = SOLD OUT */
 const PRODUITS = [
- {id:1,nom:"T-shirt Silence Work",cat:"T-shirts",ancien:12000,prix:9000,
-  desc:"Le t-shirt signature Silence Work : un graphisme fort sur la poitrine, une coupe confortable pour tous les jours.",
-  details:["Logo Silence Work imprimé","Coupe confortable, unisexe","Disponible du S au XXL","Création Silence Work, Dakar"],
-  couleurs:[{nom:"Noir",hex:"#111",encre:"#fff",img:[]},{nom:"Bordeaux",hex:"#6E1730",encre:"#fff",img:[]},{nom:"Kaki",hex:"#5b6038",encre:"#fff",img:[]},{nom:"Rose",hex:"#e9b6c4",encre:"#111",img:[]},{nom:"Marron",hex:"#6b4a3a",encre:"#fff",img:[],epuise:1}]},
- {id:2,nom:"T-shirt Graffiti",cat:"T-shirts",prix:12000,
-  desc:"Le logo graffiti bleu et rouge en grand, sur un t-shirt blanc facile à porter.",
-  details:["Logo graffiti bleu et rouge","Coupe confortable, unisexe","Disponible du S au XXL","Création Silence Work, Dakar"],
-  couleurs:[{nom:"Blanc",hex:"#fff",encre:"#2B4BFF",img:[]}]},
- {id:3,nom:"Hoodie Logo Bleu & Rouge",cat:"Hoodies",prix:25000,hood:1,
-  desc:"Le hoodie blanc au logo Silence Work bleu et rouge. Confortable, pensé pour être vu.",
-  details:["Logo bleu et rouge brodé ou imprimé","Capuche","Disponible du S au XXL","Création Silence Work, Dakar"],
-  couleurs:[{nom:"Blanc",hex:"#fff",encre:"#2B4BFF",img:[]}]},
- {id:4,nom:"Hoodie Silence Work",cat:"Hoodies",prix:25000,hood:1,
-  desc:"Le hoodie crème Silence Work, un basique chaud et confortable.",
-  details:["Logo Silence Work","Capuche","Disponible du S au XXL","Création Silence Work, Dakar"],
-  couleurs:[{nom:"Crème",hex:"#e8dfcf",encre:"#E5322B",img:[]}]},
- {id:5,nom:"Jogging Silence Work",cat:"Joggings",prix:18000,pant:1,
-  desc:"Le jogging noir Silence Work, avec le symbole de la marque sur la cuisse. À assortir avec le hoodie ou le t-shirt.",
-  details:["Symbole Silence Work","Coupe confortable","Disponible du S au XXL","Création Silence Work, Dakar"],
-  couleurs:[{nom:"Noir",hex:"#111",encre:"#fff",img:[]}]},
- {id:6,nom:"Bonnet Silence Work",cat:"Bonnets",prix:8000,bonnet:1,tailles:["Unique"],
-  desc:"Le bonnet Silence Work, pour compléter ton look avec le nom de la marque.",
-  details:["Logo Silence Work","Taille unique","Création Silence Work, Dakar"],
-  couleurs:[{nom:"Noir",hex:"#111",encre:"#fff",img:[]},{nom:"Gris",hex:"#9a9a9a",encre:"#111",img:[]}]}
+  {
+    "id": 1794879053962,
+    "nom": "T-shirt simple",
+    "cat": "T-shirts",
+    "prix": 7000,
+    "ancien": null,
+    "desc": "Fais parti de la premiére collection",
+    "details": [
+      "Logo Silence Work sérigraphié ou brodé",
+      "Coupe confortable, unisexe",
+      "Création originale, Dakar"
+    ],
+    "visible": true,
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "couleurs": [
+      {
+        "nom": "Noir",
+        "hex": "#111111",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/9493bf02-1275-41ec-af87-6f9be1c697c0-1794879066657.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5
+        },
+        "epuise": 0,
+        "og_img": "assets/produits/og-share-1794879066960-1794879066964.jpg"
+      }
+    ]
+  },
+  {
+    "id": 1794878899128,
+    "nom": "Pull",
+    "cat": "Hoodies",
+    "prix": 15000,
+    "ancien": 18000,
+    "desc": "Concu pour l'hiver",
+    "details": [
+      "Logo Silence Work sérigraphié ou brodé",
+      "Coupe confortable, unisexe",
+      "Création originale, Dakar"
+    ],
+    "visible": true,
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "couleurs": [
+      {
+        "nom": "Blanc",
+        "hex": "#ffffff",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/0143f49a-36d7-4564-a005-e080c32871e6-1794878908396.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5
+        },
+        "epuise": 0,
+        "og_img": "assets/produits/og-share-1794878908590-1794878908594.jpg"
+      }
+    ]
+  },
+  {
+    "id": 1794878040638,
+    "nom": "t-shirt été",
+    "cat": "T-shirts",
+    "prix": 7000,
+    "ancien": null,
+    "desc": "T-shirt de qualité premium",
+    "details": [
+      "Logo Silence Work sérigraphié ou brodé",
+      "Coupe confortable, unisexe"
+    ],
+    "visible": true,
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "couleurs": [
+      {
+        "nom": "blanc",
+        "hex": "#ffffff",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/705b633a-9db2-4ea0-92ce-e09c3e72b10c-1794878056556.webp",
+          "assets/produits/b953ec28-118a-4915-b9a9-c91598af1a23-1794878166067.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5
+        },
+        "epuise": 0,
+        "og_img": "assets/produits/og-share-1794878056855-1794878056859.jpg"
+      }
+    ]
+  },
+  {
+    "id": 1794532542301,
+    "nom": "Bonnet",
+    "cat": "Bonnets",
+    "prix": 7000,
+    "ancien": 9000,
+    "desc": "",
+    "details": [
+      "Logo Silence Work sérigraphié ou brodé",
+      "Coupe confortable, unisexe",
+      "Création originale, Dakar"
+    ],
+    "visible": true,
+    "tailles": [
+      "Unique"
+    ],
+    "couleurs": [
+      {
+        "nom": "Noir",
+        "hex": "#111111",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/48ece4ad-6cef-4b87-9ab4-d4b3d67144ac-1794533720490.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5,
+          "Unique": 5
+        },
+        "epuise": 0
+      },
+      {
+        "nom": "Blanc",
+        "hex": "#ffffff",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/192e0458-0f8f-4c49-84d1-0d3d01f6d12b-1794533727142.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5,
+          "Unique": 5
+        },
+        "epuise": 0
+      },
+      {
+        "nom": "Vert",
+        "hex": "#3f5c3d",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/fcc1ec2d-d689-463d-bd64-1d2f53b936d1-1794533302394.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5,
+          "Unique": 5
+        },
+        "epuise": 0
+      }
+    ]
+  },
+  {
+    "id": 1794531820903,
+    "nom": "PILL NOIRR",
+    "cat": "Hoodies",
+    "prix": 9000,
+    "ancien": null,
+    "desc": "",
+    "details": [
+      "Logo Silence Work sérigraphié ou brodé",
+      "Coupe confortable, unisexe",
+      "Création originale, Dakar"
+    ],
+    "visible": true,
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "couleurs": [
+      {
+        "nom": "Noir",
+        "hex": "#111111",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/6b064c0a-5282-43b7-a681-fb90cc509c64-1794532195980.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5
+        },
+        "epuise": 0
+      }
+    ]
+  },
+  {
+    "id": 1794531592969,
+    "nom": "XXXXXX",
+    "cat": "Hoodies",
+    "prix": 9000,
+    "ancien": null,
+    "desc": "",
+    "details": [
+      "Logo Silence Work sérigraphié ou brodé",
+      "Coupe confortable, unisexe",
+      "Création originale, Dakar"
+    ],
+    "visible": true,
+    "tailles": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "couleurs": [
+      {
+        "nom": "Noir",
+        "hex": "#111111",
+        "encre": "#ffffff",
+        "img": [
+          "assets/produits/099e835d-1eac-4b2f-8f6a-cc4867dd9fa4-1794531652834.webp"
+        ],
+        "stock": {
+          "S": 5,
+          "M": 5,
+          "L": 5,
+          "XL": 5,
+          "XXL": 5
+        },
+        "epuise": 0
+      }
+    ]
+  }
 ];
 /* ============================= */

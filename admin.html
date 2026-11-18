@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Silence Work Sénégal – Espace Administration</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+<!-- Supabase JS Client v2 (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- ==============================================================================
+     ÉCRAN D'AUTHENTIFICATION (SUPABASE AUTH / CONNEXION ADMIN)
+     ============================================================================== -->
+<div id="authView" class="auth-page-container">
+  <div class="auth-card">
+    <img src="assets/logo-silence-work-noir.png" alt="Silence Work" class="auth-logo">
+    <h1 class="auth-title">Espace Administration</h1>
+    <p class="auth-desc">Silence Work Sénégal · Connecte-toi pour gérer la boutique</p>
+
+    <div id="authError" class="auth-error"></div>
+
+    <form id="authForm" class="auth-form">
+      <div class="form-group">
+        <label class="form-label" for="authEmail">Adresse e-mail</label>
+        <input type="email" id="authEmail" class="form-input" value="admin@silencework.sn" placeholder="admin@silencework.sn" required autocomplete="username">
+      </div>
+      <div class="form-group" style="margin-bottom:24px">
+        <label class="form-label" for="authPassword">Mot de passe</label>
+        <input type="password" id="authPassword" class="form-input" value="silencework2026" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <button type="submit" id="btnSignIn" class="btn btn-primary" style="width:100%">
+        Se connecter
+      </button>
+    </form>
+    <div style="margin-top:20px;font-size:11.5px;color:var(--text-muted);border-top:1px solid var(--border-light);padding-top:14px">
+      Accès sécurisé réservé à l'équipe Silence Work Sénégal
+    </div>
+  </div>
+</div>
+
+<!-- ==============================================================================
+     APPLICATION ADMIN PRINCIPALE (VISIBLE APRÈS CONNEXION)
+     ============================================================================== -->
+<div id="appView" class="app-layout" style="display:none">
+
+  <!-- Voile sombre pour mobile -->
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <!-- Barre supérieure pour écran mobile -->
+  <div class="mobile-topbar">
+    <button type="button" id="burgerBtn" class="mobile-burger-btn" aria-label="Ouvrir le menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <div style="display:flex;align-items:center;gap:8px">
+      <img src="assets/logo-silence-work-noir.png" alt="Silence Work" style="height:26px">
+      <span style="font-family:'Syne',sans-serif;font-weight:700">Silence Work</span>
+    </div>
+    <a href="index.html" target="_blank" class="btn btn-secondary btn-sm" title="Voir la boutique">
+      Boutique
+    </a>
+  </div>
+
+  <!-- Barre latérale à gauche -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <img src="assets/logo-silence-work-noir.png" alt="Silence Work" class="sidebar-logo">
+      <span class="sidebar-brand-name">Silence Work</span>
+      <span class="sidebar-badge">Admin</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Menu principal">
+      <button type="button" class="nav-item active" data-nav="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Tableau de bord
+      </button>
+
+      <button type="button" class="nav-item" data-nav="produits">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        Produits
+        <span id="navProdCount" class="nav-badge">0</span>
+      </button>
+
+      <button type="button" class="nav-item" data-nav="commandes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Commandes
+        <span id="navOrdersCount" class="nav-badge">0</span>
+      </button>
+
+      <button type="button" class="nav-item" data-nav="categories">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        Catégories
+      </button>
+
+      <button type="button" class="nav-item" data-nav="parametres">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Paramètres
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="index.html" target="_blank" rel="noopener" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        Voir la boutique
+      </a>
+      <button type="button" id="btnLogout" class="nav-item logout">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Déconnexion
+      </button>
+    </div>
+  </aside>
+
+  <!-- Zone de contenu principale -->
+  <div class="main-wrapper">
+    <main class="content-area">
+
+      <!-- ==============================================================================
+           VUE 1 : TABLEAU DE BORD
+           ============================================================================== -->
+      <section id="viewDashboard" class="view-panel">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Tableau de bord</h1>
+            <p class="page-subtitle">Aperçu rapide de ton catalogue Silence Work et de tes ventes</p>
+          </div>
+          <button type="button" class="btn btn-primary" data-action="go-add-product">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Ajouter un produit
+          </button>
+        </div>
+
+        <!-- Alerte migration Supabase si tables non créées -->
+        <div id="migrationAlert" style="display:none;background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius);padding:14px 18px;margin-bottom:24px;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:12px">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <div style="font-size:13px;color:#1e3a8a">
+              <strong>Projet Supabase connecté !</strong> Exécutez le script <code>supabase/migration.sql</code> dans l'éditeur SQL de votre projet Supabase pour créer les tables.
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="window.copyMigrationSql()">
+            Copier le SQL
+          </button>
+        </div>
+
+        <!-- 4 Cartes de chiffres -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Total produits</span>
+              <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path></svg>
+            </div>
+            <div id="dashTotalProd" class="stat-value">0</div>
+            <div class="stat-meta">Au catalogue Silence Work</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>En stock</span>
+              <svg class="stat-icon" style="color:var(--accent-green)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div id="dashInStock" class="stat-value" style="color:var(--accent-green)">0</div>
+            <div class="stat-meta">Disponibles à la vente</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>En rupture</span>
+              <svg class="stat-icon" style="color:var(--accent-red)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+            </div>
+            <div id="dashOutOfStock" class="stat-value" style="color:var(--accent-red)">0</div>
+            <div class="stat-meta">À réapprovisionner</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Catégories actives</span>
+              <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            </div>
+            <div id="dashActiveCats" class="stat-value">0</div>
+            <div class="stat-meta">Collections actuelles</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start">
+          <!-- 5 Dernières Commandes -->
+          <div class="table-card" style="padding:22px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h2 style="font-size:16px">Dernières commandes</h2>
+              <button type="button" class="btn btn-secondary btn-sm" data-nav-target="commandes">Voir toutes</button>
+            </div>
+            <div id="dashOrdersList"></div>
+          </div>
+
+          <!-- Produits bientôt en rupture -->
+          <div class="table-card" style="padding:22px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+              <h2 style="font-size:16px">Bientôt en rupture</h2>
+              <span class="badge badge-rupture" id="dashLowStockBadge">0 alerte</span>
+            </div>
+            <div id="dashLowStockList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================================================
+           VUE 2 : PAGE PRODUITS (LA PLUS IMPORTANTE)
+           ============================================================================== -->
+      <section id="viewProduits" class="view-panel" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Produits</h1>
+            <p class="page-subtitle">Gère ton catalogue, tes stocks et tes photos</p>
+          </div>
+          <!-- UN SEUL BOUTON PRINCIPAL NOIR PLEIN -->
+          <button type="button" id="btnHeaderAddProd" class="btn btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Ajouter un produit
+          </button>
+        </div>
+
+        <!-- 4 Cartes de chiffres de la page produits -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header"><span>Total produits</span></div>
+            <div id="statProdTotal" class="stat-value">0</div>
+            <div class="stat-meta">Toutes catégories</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header"><span>En stock</span></div>
+            <div id="statProdStock" class="stat-value" style="color:var(--accent-green)">0</div>
+            <div class="stat-meta">Prêts à être vendus</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header"><span>En rupture</span></div>
+            <div id="statProdRupture" class="stat-value" style="color:var(--accent-red)">0</div>
+            <div class="stat-meta">Sold out ou stock à 0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header"><span>Catégories actives</span></div>
+            <div id="statProdCats" class="stat-value">0</div>
+            <div class="stat-meta">Rayons visibles</div>
+          </div>
+        </div>
+
+        <!-- Barre d'outils et de filtres -->
+        <div class="toolbar-card">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="search" id="prodSearch" class="search-input" placeholder="Rechercher par nom de produit...">
+            </div>
+
+            <select id="prodCatFilter" class="select-filter" aria-label="Filtrer par catégorie">
+              <option value="Toutes">Toutes les catégories</option>
+            </select>
+
+            <div class="filter-pills" role="radiogroup" aria-label="Filtre de disponibilité">
+              <button type="button" class="filter-pill active" data-filter="all">
+                Tous <span id="countPillAll" class="filter-pill-count">0</span>
+              </button>
+              <button type="button" class="filter-pill" data-filter="instock">
+                En stock <span id="countPillInStock" class="filter-pill-count">0</span>
+              </button>
+              <button type="button" class="filter-pill" data-filter="outofstock">
+                Rupture <span id="countPillOutOfStock" class="filter-pill-count">0</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tableau des produits -->
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width:70px">Photo</th>
+                <th>Nom du produit</th>
+                <th>Catégorie</th>
+                <th>Prix</th>
+                <th>Disponibilité</th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <!-- Rempli dynamiquement -->
+            </tbody>
+          </table>
+          <div id="productsEmptyState" class="empty-state" style="display:none">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line></svg>
+            <h3 class="empty-state-title">Aucun produit trouvé</h3>
+            <p class="empty-state-desc">Aucun vêtement ne correspond à tes filtres. Clique sur Ajouter un produit pour commencer.</p>
+            <button type="button" class="btn btn-primary btn-sm" data-action="go-add-product">
+              Ajouter un produit
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================================================
+           VUE 3 : FORMULAIRE PRODUIT (AJOUTER & MODIFIER – 3 BLOCS SIMPLES)
+           ============================================================================== -->
+      <section id="viewProduitForm" class="view-panel" style="display:none">
+        <div class="form-view-container">
+
+          <div class="page-header">
+            <div>
+              <h1 id="formProductTitle" class="page-title">Ajouter un produit</h1>
+              <p class="page-subtitle">Remplis les 3 blocs ci-dessous pour publier ta pièce sur la boutique</p>
+            </div>
+            <button type="button" id="btnCancelTop" class="btn btn-secondary">
+              Annuler
+            </button>
+          </div>
+
+          <form id="productForm" novalidate>
+
+            <!-- BLOC 1 : INFORMATIONS DU PRODUIT -->
+            <div class="form-block">
+              <div class="form-block-header">
+                <h2 class="form-block-title">
+                  <span class="block-step-num">1</span>
+                  Informations
+                </h2>
+                <span class="form-label-desc">Nom, tarif et détails affichés sur la fiche</span>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="prodName">Nom du produit *</label>
+                  <input type="text" id="prodName" class="form-input" placeholder="ex. T-shirt Silence Work" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="prodCategory">Catégorie *</label>
+                  <select id="prodCategory" class="form-select" required>
+                    <!-- Rempli dynamiquement -->
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="prodPrice">Prix de vente (FCFA) *</label>
+                  <input type="number" id="prodPrice" class="form-input" placeholder="ex. 9000" min="0" step="500" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="prodOldPrice">
+                    Ancien prix (FCFA)
+                    <span class="form-label-desc">Optionnel, pour afficher un prix barré en promotion</span>
+                  </label>
+                  <input type="number" id="prodOldPrice" class="form-input" placeholder="ex. 12000" min="0" step="500">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="prodDesc">Description du vêtement</label>
+                <textarea id="prodDesc" class="form-textarea" placeholder="Décris la coupe, la matière et l'esprit de la pièce..."></textarea>
+              </div>
+
+              <!-- Détails du produit (liste de puces facile à ajouter/retirer) -->
+              <div class="form-group">
+                <label class="form-label">
+                  Détails du produit (liste à puces)
+                  <button type="button" id="btnAddDetailBullet" class="btn btn-secondary btn-sm">
+                    + Ajouter une puce
+                  </button>
+                </label>
+                <div id="bulletListContainer" class="bullet-list">
+                  <!-- Puces ajoutées dynamiquement -->
+                </div>
+              </div>
+
+              <!-- Produit visible oui/non -->
+              <div class="form-group" style="margin-top:14px">
+                <label class="switch-container">
+                  <input type="checkbox" id="prodVisible" class="switch-checkbox" style="display:none" checked>
+                  <span class="switch-toggle"></span>
+                  <div>
+                    <strong style="display:block;font-size:13.5px">Produit visible sur la boutique</strong>
+                    <span style="font-size:12px;color:var(--text-muted)">Si désactivé, le produit est masqué aux visiteurs de la boutique</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- BLOC 2 : COULEURS, TAILLES ET STOCK -->
+            <div class="form-block">
+              <div class="form-block-header">
+                <h2 class="form-block-title">
+                  <span class="block-step-num">2</span>
+                  Couleurs, tailles et stock
+                </h2>
+                <span class="form-label-desc">Gère les variantes et les quantités réelles</span>
+              </div>
+
+              <!-- Liste des couleurs -->
+              <div class="form-group">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                  <label class="form-label">Couleurs disponibles pour ce vêtement *</label>
+                  <button type="button" id="btnAddColorBtn" class="btn btn-secondary btn-sm">
+                    + Ajouter une couleur
+                  </button>
+                </div>
+                <div id="colorsListContainer" class="colors-list">
+                  <!-- Lignes de couleurs dynamiques -->
+                </div>
+              </div>
+
+              <!-- Choix des tailles disponibles -->
+              <div class="form-group">
+                <label class="form-label" style="margin-bottom:8px">Tailles proposées pour ce modèle :</label>
+                <div id="sizesCheckboxes" class="sizes-checkbox-grid">
+                  <label class="size-pill-label checked" data-size="S"><input type="checkbox" value="S" checked> S</label>
+                  <label class="size-pill-label checked" data-size="M"><input type="checkbox" value="M" checked> M</label>
+                  <label class="size-pill-label checked" data-size="L"><input type="checkbox" value="L" checked> L</label>
+                  <label class="size-pill-label checked" data-size="XL"><input type="checkbox" value="XL" checked> XL</label>
+                  <label class="size-pill-label checked" data-size="XXL"><input type="checkbox" value="XXL" checked> XXL</label>
+                  <label class="size-pill-label" data-size="Unique"><input type="checkbox" value="Unique"> Taille unique</label>
+                </div>
+              </div>
+
+              <!-- Matrice de gestion des stocks (+ Entrée / - Sortie) -->
+              <div class="form-group" style="margin-top:20px">
+                <label class="form-label">
+                  Gestion du stock par couleur et par taille
+                  <span class="form-label-desc">À 0, la taille ou couleur passe automatiquement en Rupture</span>
+                </label>
+                <div style="overflow-x:auto">
+                  <table class="stock-matrix-table">
+                    <thead>
+                      <tr>
+                        <th>Couleur</th>
+                        <th>Taille</th>
+                        <th>Quantité en stock</th>
+                        <th>Ajustement rapide</th>
+                        <th>État</th>
+                      </tr>
+                    </thead>
+                    <tbody id="stockMatrixBody">
+                      <!-- Rempli dynamiquement -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- BLOC 3 : PHOTOS, PAR COULEUR -->
+            <div class="form-block">
+              <div class="form-block-header">
+                <h2 class="form-block-title">
+                  <span class="block-step-num">3</span>
+                  Photos, par couleur
+                </h2>
+                <span class="form-label-desc">Chaque couleur a sa propre galerie de photos</span>
+              </div>
+
+              <!-- Onglets des couleurs configurées dans le bloc 2 -->
+              <div id="photosColorTabs" class="color-tabs-nav">
+                <!-- Rempli dynamiquement -->
+              </div>
+
+              <!-- Zone de glisser-déposer pour ajouter des photos -->
+              <div id="photoDropzone" class="dropzone">
+                <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <div class="dropzone-title">Glisse tes photos ici ou clique pour les sélectionner</div>
+                <div class="dropzone-subtitle">Photos optimisées automatiquement en WebP (largeur max 1600 px)</div>
+                <input type="file" id="photoFileInput" multiple accept="image/*" style="display:none">
+                <div style="margin-top:14px">
+                  <button type="button" id="btnBrowsePhotos" class="btn btn-secondary btn-sm">
+                    Ajouter des photos
+                  </button>
+                </div>
+              </div>
+
+              <!-- Barre de progression d'upload -->
+              <div id="uploadProgressContainer" class="progress-container">
+                <div id="uploadProgressBar" class="progress-bar"></div>
+              </div>
+
+              <!-- Galerie de photos pour la couleur sélectionnée -->
+              <div id="photosGalleryContainer" class="photos-gallery-grid">
+                <!-- Cartes des photos dynamiques -->
+              </div>
+
+              <!-- Aperçu direct de ce que verra le client sur la boutique -->
+              <div class="client-preview-box">
+                <div class="client-preview-title">Aperçu boutique en direct</div>
+                <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+                  <div class="mini-preview-card">
+                    <div id="previewCardImg" class="mini-preview-pic">
+                      <!-- Image ou croquis vectoriel de remplacement -->
+                    </div>
+                    <div id="previewCardTitle" style="font-weight:700;font-size:14px;margin-bottom:4px">Nom du vêtement</div>
+                    <div id="previewCardPrice" style="font-size:13px;font-weight:600;margin-bottom:6px">9 000 FCFA</div>
+                    <div id="previewCardDots" style="display:flex;gap:4px"></div>
+                  </div>
+                  <div style="flex:1;min-width:240px;font-size:13px;color:var(--text-muted)">
+                    <p style="margin-bottom:8px">Cet aperçu reflète en temps réel la photo de couverture, le titre, le prix barré (si promo) et les pastilles de couleurs choisis.</p>
+                    <p>Si aucune photo n'est ajoutée, le site affiche automatiquement les croquis vectoriels dessinés de Silence Work.</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- BARRE FIXE EN BAS : ANNULER & ENREGISTRER LE PRODUIT -->
+            <div class="form-bottom-bar">
+              <div class="dirty-indicator">
+                <span class="dirty-dot" id="formDirtyDot"></span>
+                <span id="formDirtyText">Toutes les modifications sont prêtes</span>
+              </div>
+              <div class="bottom-buttons">
+                <button type="button" id="btnCancelBottom" class="btn btn-secondary">
+                  Annuler
+                </button>
+                <button type="submit" id="btnSaveProduct" class="btn btn-primary">
+                  Enregistrer le produit
+                </button>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </section>
+
+      <!-- ==============================================================================
+           VUE 4 : COMMANDES
+           ============================================================================== -->
+      <section id="viewCommandes" class="view-panel" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Commandes</h1>
+            <p class="page-subtitle">Suivi des commandes passées sur la boutique et contact direct WhatsApp</p>
+          </div>
+        </div>
+
+        <div class="toolbar-card">
+          <div class="toolbar-left">
+            <div class="filter-pills" id="orderStatusFilters">
+              <button type="button" class="filter-pill active" data-order-status="all">Toutes</button>
+              <button type="button" class="filter-pill" data-order-status="nouvelle">Nouvelle</button>
+              <button type="button" class="filter-pill" data-order-status="confirmee">Confirmée</button>
+              <button type="button" class="filter-pill" data-order-status="payee">Payée</button>
+              <button type="button" class="filter-pill" data-order-status="livree">Livrée</button>
+              <button type="button" class="filter-pill" data-order-status="annulee">Annulée</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>N° Commande</th>
+                <th>Client</th>
+                <th>Téléphone</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th style="text-align:right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Rempli dynamiquement -->
+            </tbody>
+          </table>
+          <div id="ordersEmptyState" class="empty-state" style="display:none">
+            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+            <h3 class="empty-state-title">Aucune commande pour le moment</h3>
+            <p class="empty-state-desc">Les commandes passées par vos clients apparaîtront directement ici.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================================================
+           VUE 5 : CATÉGORIES
+           ============================================================================== -->
+      <section id="viewCategories" class="view-panel" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Catégories</h1>
+            <p class="page-subtitle">Organise tes pièces (T-shirts, Hoodies, Joggings, etc.)</p>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:24px;align-items:start">
+          <!-- Ajouter une catégorie -->
+          <div class="table-card" style="padding:24px">
+            <h2 style="font-size:16px;margin-bottom:14px">Ajouter une catégorie</h2>
+            <form id="addCategoryForm">
+              <div class="form-group">
+                <label class="form-label" for="newCategoryName">Nom de la catégorie</label>
+                <input type="text" id="newCategoryName" class="form-input" placeholder="ex. Casquettes" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%">
+                Ajouter la catégorie
+              </button>
+            </form>
+          </div>
+
+          <!-- Liste des catégories existantes -->
+          <div class="table-card">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Nom de la catégorie</th>
+                  <th>Produits rattachés</th>
+                  <th style="text-align:right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="categoriesTableBody">
+                <!-- Rempli dynamiquement -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================================================
+           VUE 6 : PARAMÈTRES
+           ============================================================================== -->
+      <section id="viewParametres" class="view-panel" style="display:none">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Paramètres</h1>
+            <p class="page-subtitle">Coordonnées de la marque et connexion à la base de données</p>
+          </div>
+        </div>
+
+        <div style="max-width:800px;display:flex;flex-direction:column;gap:24px">
+          <form id="settingsForm">
+            <!-- Bloc 1 : Coordonnées boutique -->
+            <div class="form-block">
+              <div class="form-block-header">
+                <h2 class="form-block-title">Coordonnées de la marque</h2>
+                <span class="form-label-desc">Numéro pour recevoir les commandes WhatsApp</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settingWhatsapp">Numéro WhatsApp & Paiement Silence Work</label>
+                <input type="text" id="settingWhatsapp" class="form-input" value="221776336310" placeholder="221776336310" required>
+                <span class="form-label-desc">Format international sans le signe +, ex. 221776336310 (Numéro Wave & Orange Money)</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settingBandeau">Texte du bandeau de livraison (haut du site)</label>
+                <input type="text" id="settingBandeau" class="form-input" placeholder="Livraison à Dakar · Paiement Wave, Orange Money ou à la livraison">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settingDevise">Devise</label>
+                <input type="text" id="settingDevise" class="form-input" value="FCFA" readonly style="background:#f9fafb;cursor:not-allowed">
+              </div>
+            </div>
+
+            <!-- Bloc 2 : Connexion Supabase -->
+            <div class="form-block">
+              <div class="form-block-header">
+                <h2 class="form-block-title">Connexion Supabase</h2>
+                <span class="form-label-desc">Synchronisation avec votre base de données Cloud</span>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:12px 16px;background:#f9fafb;border-radius:var(--radius-sm);border:1px solid var(--border-light)">
+                <span id="supabaseStatusDot" style="width:10px;height:10px;border-radius:50%;background:#10b981"></span>
+                <span id="supabaseStatusText" style="font-weight:500;font-size:13px">Vérification de la connexion...</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settingSupabaseUrl">URL du projet Supabase</label>
+                <input type="url" id="settingSupabaseUrl" class="form-input" placeholder="https://votrenom.supabase.co">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="settingSupabaseAnonKey">Clé publique (Anon Public Key)</label>
+                <input type="password" id="settingSupabaseAnonKey" class="form-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+                <span class="form-label-desc">Uniquement la clé publique `anon`. Ne saisis jamais la clé secrète `service_role`.</span>
+              </div>
+
+              <div style="margin-top:12px;display:flex;gap:10px">
+                <button type="button" id="btnTestSupabase" class="btn btn-secondary btn-sm">
+                  Tester la connexion
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <button type="submit" class="btn btn-primary">
+                Enregistrer les paramètres
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ==============================================================================
+     MODALE DE CONFIRMATION (POUR LES SUPPRESSIONS DANGEREUSES)
+     ============================================================================== -->
+<div id="confirmModal" class="modal-backdrop" style="display:none">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="confirmTitle" class="modal-title">Es-tu sûr ?</h2>
+      <p id="confirmDesc" class="modal-subtitle">Cette action est irréversible.</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" id="btnConfirmCancel" class="btn btn-secondary">
+        Annuler
+      </button>
+      <button type="button" id="btnConfirmDanger" class="btn btn-danger-solid">
+        Supprimer définitivement
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==============================================================================
+     MODALE DE DÉTAIL DE COMMANDE
+     ============================================================================== -->
+<div id="orderDetailModal" class="modal-backdrop" style="display:none">
+  <div class="modal-card modal-card-lg">
+    <div class="modal-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div>
+        <h2 id="modalOrderNumber" class="modal-title">Commande #</h2>
+        <p id="modalOrderDate" class="modal-subtitle"></p>
+      </div>
+      <button type="button" id="btnCloseOrderModal" class="btn btn-secondary btn-sm">Fermer</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+      <div style="background:#f9fafb;padding:16px;border-radius:var(--radius-sm)">
+        <h3 style="font-size:13px;margin-bottom:8px;text-transform:uppercase;color:var(--text-muted)">Client</h3>
+        <p><strong id="modalOrderClientName"></strong></p>
+        <p id="modalOrderClientTel" style="color:var(--text-muted);font-size:13px"></p>
+        <p id="modalOrderClientAddr" style="margin-top:6px;font-size:13px"></p>
+      </div>
+
+      <div style="background:#f9fafb;padding:16px;border-radius:var(--radius-sm)">
+        <h3 style="font-size:13px;margin-bottom:8px;text-transform:uppercase;color:var(--text-muted)">Statut & Paiement</h3>
+        <p>Statut actuel : <span id="modalOrderCurrentStatus" class="badge"></span></p>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:6px">Mode : <span id="modalOrderPayMode"></span></p>
+        <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="btn btn-secondary btn-sm" data-set-status="confirmée">Confirmer</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-set-status="payée">Payée</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-set-status="livrée">Livrée</button>
+          <button type="button" class="btn btn-danger btn-sm" data-set-status="annulée">Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:20px">
+      <h3 style="font-size:13px;margin-bottom:10px;text-transform:uppercase;color:var(--text-muted)">Articles commandés</h3>
+      <div id="modalOrderArticlesList" style="border:1px solid var(--border);border-radius:var(--radius-sm)"></div>
+      <div style="display:flex;justify-content:space-between;padding:12px 16px;font-weight:700;font-size:15px;background:#f9fafb;border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm)">
+        <span>Total</span>
+        <span id="modalOrderTotal">0 FCFA</span>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="justify-content:space-between">
+      <button type="button" id="btnOrderWhatsApp" class="btn btn-primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        Écrire au client sur WhatsApp
+      </button>
+      <button type="button" id="btnCloseOrderModal2" class="btn btn-secondary">
+        Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==============================================================================
+     CONTENEUR DE NOTIFICATIONS TOAST
+     ============================================================================== -->
+<div id="toastContainer" class="toast-container"></div>
+
+<script src="js/data.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

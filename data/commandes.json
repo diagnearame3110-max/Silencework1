@@ -1,0 +1,42 @@
+[
+  {
+    "id": "cmd-1",
+    "numero": "SW-1084",
+    "client_nom": "Moussa Diop",
+    "client_tel": "77 123 45 67",
+    "client_adresse": "Almadies, Dakar",
+    "total": 18000,
+    "statut": "nouvelle",
+    "paiement_mode": "Wave",
+    "created_at": "2026-11-10T00:11:14.069Z",
+    "articles": [
+      {
+        "nom": "T-shirt Silence Work",
+        "couleur": "Noir",
+        "taille": "L",
+        "quantite": 2,
+        "prix": 9000
+      }
+    ]
+  },
+  {
+    "id": "cmd-2",
+    "numero": "SW-1083",
+    "client_nom": "Fatou Ndiaye",
+    "client_tel": "78 987 65 43",
+    "client_adresse": "Mermoz, Dakar",
+    "total": 25000,
+    "statut": "confirmée",
+    "paiement_mode": "Orange Money",
+    "created_at": "2026-11-09T18:11:14.069Z",
+    "articles": [
+      {
+        "nom": "Hoodie Silence Work",
+        "couleur": "Crème",
+        "taille": "M",
+        "quantite": 1,
+        "prix": 25000
+      }
+    ]
+  }
+]

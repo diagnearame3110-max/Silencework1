@@ -9,12 +9,28 @@ const promo = p => p.ancien && p.ancien>p.prix;
 const tousEp = p => p.couleurs.every(c=>c.epuise);
 const imgs = c => c.img && c.img.length ? c.img : VUES;
 const libelle = (it,i) => LAB[it] || "Photo "+(i+1);
+try{
+  const customData=JSON.parse(localStorage.getItem("sw-custom-data")||"null");
+  if(customData){
+    if(Array.isArray(customData.produits) && customData.produits.length){
+      PRODUITS.splice(0, PRODUITS.length, ...customData.produits);
+    }
+    if(Array.isArray(customData.lookbook)){
+      customData.lookbook.forEach((cl,i)=>{if(LOOKBOOK[i]&&cl.img!==undefined)LOOKBOOK[i].img=cl.img});
+    }
+    if(customData.bandeau){
+      const topEl=document.querySelector(".top");
+      if(topEl) topEl.textContent=customData.bandeau;
+    }
+  }
+}catch(e){}
 let panier=[], filtre="Tous", favs=[];
 try{panier=JSON.parse(localStorage.getItem("sw-panier2")||"[]").filter(l=>prod(l.id)&&prod(l.id).couleurs[l.c])}catch(e){}
 try{favs=JSON.parse(localStorage.getItem("sw-fav")||"[]")}catch(e){}
 const save=()=>{try{localStorage.setItem("sw-panier2",JSON.stringify(panier))}catch(e){}};
 const total=()=>panier.reduce((s,l)=>s+prod(l.id).prix*l.q,0);
 const cats=["Tous",...new Set(PRODUITS.map(p=>p.cat))];
+
 
 const lum=h=>{h=h.replace("#","");if(h.length===3)h=[...h].map(x=>x+x).join("");const n=parseInt(h,16);return(.299*(n>>16)+.587*((n>>8)&255)+.114*(n&255))/255};
 function svgVue(p,c,v){
@@ -114,6 +130,13 @@ function majSel(){document.querySelectorAll("#pdp .sz").forEach(b=>{const on=b.d
 function navG(d){const n=imgs(curC()).length;G.i=(G.i+d+n)%n;majGal();if(!$("#lb").hidden)majLb()}
 function majLb(){const p=G.p,c=curC(),l=imgs(c);$("#lbimg").innerHTML=vueHtml(p,c,l[G.i],p.nom);$("#lbc").textContent=`${p.nom} – ${c.nom} · ${libelle(l[G.i],G.i)} (${G.i+1}/${l.length})`}
 const fermeLb=()=>{$("#lb").hidden=true;if(!$("#cart").classList.contains("on"))document.body.style.overflow=""};
+function getProdShareUrl(id, c) {
+  let origin = (typeof window !== "undefined" && window.location && window.location.origin) ? window.location.origin : "";
+  if (!origin || origin === "null" || origin.startsWith("file:")) {
+    origin = "https://silencework.sn";
+  }
+  return `${origin}/p/${id}?c=${c !== undefined ? c : 0}`;
+}
 function ligneWa(){const p=G.p,c=curC();return `• ${G.qte} × ${p.nom} – ${c.nom} (taille ${G.sel}) – ${fmt(p.prix*G.qte)}`}
 
 $("#pdp").addEventListener("click",e=>{
@@ -131,7 +154,10 @@ $("#pdp").addEventListener("click",e=>{
     if(curC().epuise)return;
     if(!G.sel){$("#perr").textContent="Choisis une taille avant de continuer.";return}
     if(T.closest("#wap")){
-      const msg=`Bonjour Silence Work, je souhaite commander :\n${ligneWa()}\n\nPaiement souhaité : Wave / Orange Money / à la livraison`;
+      const p = G.p, c = curC();
+      const firstLink = getProdShareUrl(p.id, G.ci);
+      const articleLine = `• ${G.qte} × ${p.nom} – ${c.nom} (taille ${G.sel}) – ${fmt(p.prix*G.qte)}\n  🔗 Voir l'article : ${firstLink}`;
+      const msg = `Bonjour Silence Work, je souhaite commander :\n${firstLink}\n\n${articleLine}\n\n💰 *Total : ${fmt(p.prix * G.qte)}*\n💳 *Paiement souhaité :* Wave / Orange Money (au 77 633 63 10) / à la livraison\n\nMerci de me confirmer la disponibilité !`;
       window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank","noopener");return}
     const id=G.p.id,c=G.ci,t=G.sel,l=panier.find(x=>x.id===id&&x.c===c&&x.t===t);
     l?l.q+=G.qte:panier.push({id,c,t,q:G.qte});
@@ -167,16 +193,96 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape"){ouvre(false);fermeLb()}
   if(!$("#lb").hidden){if(e.key==="ArrowLeft")navG(-1);if(e.key==="ArrowRight")navG(1)}
 });
-$("#form").addEventListener("submit",e=>{
+/* ---- Instructions de paiement dynamiques ---- */
+const paySelect = $("#paySelect");
+const payBox = $("#payInstruction");
+function majPayInstruction(){
+  if(!paySelect||!payBox)return;
+  const v = paySelect.value;
+  if(v.startsWith("Wave")){
+    payBox.innerHTML = '<strong>📱 Paiement Wave</strong>Effectue ton paiement au <span class="pay-num">77 633 63 10</span> (Silence Work). Nous confirmons la réception immédiatement.';
+  } else if(v.startsWith("Orange")){
+    payBox.innerHTML = '<strong>🍊 Paiement Orange Money</strong>Envoie ton transfert au <span class="pay-num">77 633 63 10</span> (Silence Work).';
+  } else {
+    payBox.innerHTML = '<strong>💵 Paiement à la livraison</strong>Règlement en espèces directement auprès du livreur lors de la livraison à Dakar.';
+  }
+}
+if(paySelect){
+  paySelect.addEventListener("change", majPayInstruction);
+  majPayInstruction();
+}
+
+$("#form").addEventListener("submit", async e => {
   e.preventDefault();
   if(!panier.length)return;
   const f=new FormData(e.target),nom=f.get("nom").trim(),rawTel=f.get("tel").trim(),tel=rawTel.replace(/[\s.\-()]/g,"").replace(/^00/,"+"),adr=f.get("adr").trim();
-  if(!nom||!adr||!/^\+?\d{9,14}$/.test(tel)){$("#err").textContent="Renseigne ton nom, un numéro valide (ex. 77 000 00 00) et ton adresse de livraison.";return}
+  if(!nom||!adr||!/^\+?\d{9,14}$/.test(tel)){$("#err").textContent="Renseigne ton nom, un numéro valide (ex. 77 633 63 10) et ton adresse de livraison.";return}
   $("#err").textContent="";
-  const lignes=panier.map(l=>{const p=prod(l.id),c=p.couleurs[l.c];return `• ${l.q} × ${p.nom} – ${c.nom} (taille ${l.t}) – ${fmt(p.prix*l.q)}`}).join("\n");
-  const msg=`Bonjour Silence Work, je souhaite commander :\n${lignes}\n\nTotal : ${fmt(total())}\nPaiement : ${f.get("pay")}\n\nNom : ${nom}\nTéléphone : ${rawTel}\nLivraison : ${adr}`;
-  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank","noopener");
-  toast("Commande envoyée sur WhatsApp !");
+
+  const modePaiement = f.get("pay") || "Wave";
+  const numCmd = "SW-" + Math.floor(1000 + Math.random() * 9000);
+  const montantTotal = total();
+
+  const articlesCmd = panier.map(l=>{
+    const p=prod(l.id), c=p.couleurs[l.c];
+    return { nom: p.nom, couleur: c.nom, taille: l.t, quantite: l.q, prix: p.prix };
+  });
+
+  const nouvelleCommande = {
+    id: "cmd-" + Date.now(),
+    numero: numCmd,
+    client_nom: nom,
+    client_tel: rawTel,
+    client_adresse: adr,
+    total: montantTotal,
+    statut: "nouvelle",
+    paiement_mode: modePaiement,
+    created_at: new Date().toISOString(),
+    articles: articlesCmd
+  };
+
+  // Enregistrer pour l'espace administration
+  try {
+    const saved = JSON.parse(localStorage.getItem("sw_commandes") || "[]");
+    saved.unshift(nouvelleCommande);
+    localStorage.setItem("sw_commandes", JSON.stringify(saved));
+  } catch(err){}
+
+  try {
+    const res = await fetch("/api/commandes");
+    if(res.ok){
+      const list = await res.json();
+      if(Array.isArray(list)){
+        list.unshift(nouvelleCommande);
+        await fetch("/api/commandes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(list)
+        });
+      }
+    }
+  } catch(err){}
+
+  // Formatage du message WhatsApp avec aperçu de lien riche pour le 1er article
+  const firstItem = panier[0];
+  const firstLink = getProdShareUrl(firstItem.id, firstItem.c);
+
+  const lignes = panier.map(l => {
+    const p = prod(l.id), c = p.couleurs[l.c];
+    const url = getProdShareUrl(l.id, l.c);
+    return `• ${l.q} × ${p.nom} – ${c.nom} (taille ${l.t}) – ${fmt(p.prix * l.q)}\n  🔗 Voir l'article : ${url}`;
+  }).join("\n");
+
+  const waNum = (typeof WHATSAPP !== "undefined" ? WHATSAPP : "221776336310");
+  const msg = `Bonjour Silence Work Sénégal, je passe une commande sur votre boutique :\n${firstLink}\n\n📋 *Commande n° ${numCmd}*\n${lignes}\n\n💰 *Total : ${fmt(montantTotal)}*\n💳 *Paiement :* ${modePaiement} (Numéro Silence Work : 77 633 63 10)\n\n👤 *Nom :* ${nom}\n📞 *Téléphone :* ${rawTel}\n📍 *Adresse de livraison :* ${adr}\n\nMerci de me confirmer la réception !`;
+
+  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`,"_blank","noopener");
+
+  panier = [];
+  save();
+  renderPanier();
+  ouvre(false);
+  toast(`Commande ${numCmd} enregistrée et transmise sur WhatsApp !`);
 });
 $("#nl").addEventListener("submit",e=>{
   e.preventDefault();
@@ -194,11 +300,50 @@ document.addEventListener("click",e=>{
   const a=e.target.closest('a[href^="#"]');if(!a)return;
   e.preventDefault();navTo(a.getAttribute("href"),true);
 });
-if(HERO_IMG)$("#hero").style.setProperty("--hero",`url(${HERO_IMG})`);
+const activeHero = (typeof HERO_IMG !== 'undefined' ? HERO_IMG : "") || (function(){ try { return JSON.parse(localStorage.getItem("sw-custom-data")||"{}").heroImg; } catch(e){ return ""; } })();
+if(activeHero && $("#hero") && $("#hero").style && $("#hero").style.setProperty) $("#hero").style.setProperty("--hero",`url(${activeHero})`);
+
 $("#tiles").innerHTML=LOOKBOOK.map(l=>`<a class="tile" href="https://www.instagram.com/silence.work_senegal/" target="_blank" rel="noopener"${l.img?` style="background-image:url(${l.img})"`:""}><span>${l.titre}</span></a>`).join("");
 $("#fcats").innerHTML=cats.slice(1).map(c=>`<li><a href="#boutique" data-f="${c}">${c}</a></li>`).join("");
 $("#fcats").addEventListener("click",e=>{const f=e.target.dataset.f;if(f){filtre=f;renderFiltres();renderGrille()}});
-$("#waLink").href=$("#waFloat").href=`https://wa.me/${WHATSAPP}`;
+const waLink = $("#waLink");
+if(waLink) waLink.href = `https://wa.me/${WHATSAPP}`;
+const waFloat = $("#waFloat");
+if(waFloat) waFloat.href = `https://wa.me/${WHATSAPP}`;
 $("#yr").textContent=new Date().getFullYear();
 renderFiltres();renderGrille();renderPanier();
+/* ---- Full-Bleed 3-Column Hero Background ---- */
+(function initHeroColumns(){
+  const hero = $("#hero");
+  if(!hero) return;
+  const cols = Array.from(hero.querySelectorAll(".hero-bg-col"));
+  if(!cols.length) return;
+
+  // Sync images if custom data or HERO_COLS is provided
+  try {
+    const custom = JSON.parse(localStorage.getItem("sw-custom-data")||"{}");
+    const list = custom.heroCols || (typeof HERO_COLS !== "undefined" ? HERO_COLS : null);
+    if(Array.isArray(list) && list.length){
+      cols.forEach((col, i) => {
+        if(list[i]){
+          const img = col.querySelector("img");
+          if(img) img.src = list[i];
+        }
+      });
+    }
+  } catch(e){}
+
+  // Fluid hover focus on columns
+  cols.forEach((col, idx) => {
+    col.addEventListener("mouseenter", () => {
+      cols.forEach((c, i) => c.classList.toggle("col-dimmed", i !== idx));
+      col.classList.add("col-active");
+    });
+    col.addEventListener("mouseleave", () => {
+      cols.forEach(c => c.classList.remove("col-dimmed", "col-active"));
+    });
+  });
+})();
+
 addEventListener("popstate",()=>navTo(location.hash||"#",false));navTo(location.hash||"#",false);
+

@@ -22,11 +22,42 @@
 
 <main id="accueil">
 <div class="hero" id="hero">
-  <h1>Silence Work</h1>
-  <img data-logo class="herologo" alt="Silence Work, le logo : une main fait le geste « chut » devant le monogramme SW">
-  <p>Adopte le style. Des créations uniques et confortables, pensées à Dakar.</p>
-  <a class="btn" href="#boutique">Découvrir la collection</a>
+  <!-- 3 Full-Bleed Background Columns -->
+  <div class="hero-bg-columns" id="heroBgCols" aria-hidden="true">
+    <div class="hero-bg-col col-1">
+      <img src="assets/produits/silence-work-hero-1.jpg" alt="Silence Work – Summer in Dakar" loading="eager">
+      <div class="col-shade"></div>
+      <span class="col-tag">Summer in Dakar</span>
+    </div>
+    <div class="hero-bg-col col-2">
+      <img src="assets/produits/silence-work-hero-3.jpg" alt="Silence Work – Streetwear Signature" loading="eager">
+      <div class="col-shade"></div>
+      <span class="col-tag">Signature SW</span>
+    </div>
+    <div class="hero-bg-col col-3">
+      <img src="assets/produits/silence-work-hero-2.jpg" alt="Silence Work – Dakar Lifestyle" loading="eager">
+      <div class="col-shade"></div>
+      <span class="col-tag">Dakar Lifestyle</span>
+    </div>
+  </div>
+
+  <!-- Central Vignette for Crisp Text Contrast -->
+  <div class="hero-scrim" aria-hidden="true"></div>
+
+  <!-- Centered Information Content -->
+  <div class="hero-center-content">
+    <span class="hero-pill">Streetwear Dakar · Nouvelle Collection</span>
+    <h1>Silence Work</h1>
+    <img data-logo class="herologo" alt="Silence Work, le logo : une main fait le geste « chut » devant le monogramme SW">
+    <p>Adopte le style. Des créations uniques et confortables, pensées et créées à Dakar.</p>
+    <div class="hero-actions">
+      <a class="btn hero-btn" href="#boutique">Découvrir la collection</a>
+      <a class="btn line hero-btn-line" href="#lookbook">Voir le lookbook</a>
+    </div>
+  </div>
 </div>
+
+
 
 <div class="trust">
   <div><strong>Créations uniques</strong>Graphismes Silence Work</div>
@@ -49,7 +80,7 @@
   <h2 style="margin-bottom:20px">Infos pratiques</h2>
   <details><summary>Comment commander ?</summary><p>Ajoute tes pièces au panier, renseigne tes coordonnées et envoie la commande sur WhatsApp. La marque confirme la disponibilité et le délai.</p></details>
   <details><summary>Livraison</summary><p>Livraison à Dakar et dans sa banlieue. Les frais et délais sont confirmés sur WhatsApp selon ton quartier.</p></details>
-  <details><summary>Paiement</summary><p>Wave, Orange Money ou paiement à la livraison.</p></details>
+  <details><summary>Paiement</summary><p>Paiement direct et sécurisé par Wave ou Orange Money au numéro officiel de la marque : <strong>77 633 63 10</strong>, ou paiement en espèces à la livraison à Dakar.</p></details>
   <details><summary>Quelle taille choisir ?</summary><p>Les pièces sont disponibles du S au XXL. En cas de doute, écris-nous ta taille habituelle sur WhatsApp et on te conseille.</p></details>
 </div></section>
 </main>
@@ -59,11 +90,11 @@
   <div class="cols">
     <div><a class="logo" href="#" aria-label="Silence Work"><img data-logo alt="" style="height:96px;width:96px"></a><p style="margin-top:10px;color:var(--mute)">Streetwear sénégalais. T-shirts, hoodies, joggings.</p></div>
     <div><h3>Boutique</h3><ul id="fcats"></ul></div>
-    <div><h3>Suivre</h3><ul><li><a href="https://www.instagram.com/silence.work_senegal/" target="_blank" rel="noopener">Instagram</a></li><li><a id="waLink" href="#" target="_blank" rel="noopener">WhatsApp</a></li></ul></div>
+    <div><h3>Suivre</h3><ul><li><a href="https://www.instagram.com/silence.work_senegal/" target="_blank" rel="noopener">Instagram</a></li></ul></div>
     <div><h3>Rejoins l’univers Silence Work</h3><p style="color:var(--mute)">Sois le premier informé des nouveautés.</p>
       <form class="nl" id="nl"><input name="c" placeholder="Ton numéro ou e-mail" aria-label="Ton numéro ou e-mail" required><button class="btn" type="submit">S’inscrire</button></form></div>
   </div>
-  <div class="legal"><span>© <span id="yr"></span> Silence Work Sénégal</span><span>Fait à Dakar</span></div>
+  <div class="legal"><span>© <span id="yr"></span> Silence Work Sénégal</span><span><a href="admin.html" style="color:inherit;text-decoration:none;opacity:.65" title="Espace d'administration">Administration</a> · Fait à Dakar</span></div>
 </div></footer>
 
 <a class="wa" id="waFloat" href="#" target="_blank" rel="noopener">Écrire sur WhatsApp</a>
@@ -75,12 +106,19 @@
   <div class="foot" id="cartFoot" hidden>
     <div class="total"><span>Total</span><span id="total"></span></div>
     <form class="co" id="form" novalidate>
-      <label>Nom complet<input name="nom" autocomplete="name" required></label>
-      <label>Téléphone<input name="tel" type="tel" autocomplete="tel" placeholder="77 000 00 00" required></label>
-      <label>Adresse de livraison (quartier, repère)<textarea name="adr" rows="2" required></textarea></label>
-      <label>Paiement<select name="pay"><option>Wave</option><option>Orange Money</option><option>Paiement à la livraison</option></select></label>
+      <label>Nom complet<input name="nom" autocomplete="name" placeholder="Prénom et nom" required></label>
+      <label>Téléphone<input name="tel" type="tel" autocomplete="tel" placeholder="77 633 63 10" required></label>
+      <label>Adresse de livraison (quartier, repère)<textarea name="adr" rows="2" placeholder="ex. Mermoz, près de la pharmacie" required></textarea></label>
+      <label>Mode de paiement
+        <select name="pay" id="paySelect">
+          <option value="Wave">Wave (77 633 63 10)</option>
+          <option value="Orange Money">Orange Money (77 633 63 10)</option>
+          <option value="Paiement à la livraison">Paiement à la livraison (Dakar)</option>
+        </select>
+      </label>
+      <div id="payInstruction" class="pay-box"></div>
       <div class="err" id="err" role="alert"></div>
-      <button class="btn" type="submit">Envoyer la commande sur WhatsApp</button>
+      <button class="btn" type="submit">Valider et commander sur WhatsApp</button>
     </form>
   </div>
 </aside>
