@@ -11,15 +11,15 @@ const HERO_COLS = [
 const LOOKBOOK = [
  {
   "titre": "Les hoodies",
-  "img": ""
+  "img": "assets/produits/lookbook-hoodie.jpg"
  },
  {
   "titre": "Les t-shirts graffiti",
-  "img": ""
+  "img": "assets/produits/lookbook-tshirt.jpg"
  },
  {
   "titre": "Le jogging noir",
-  "img": ""
+  "img": "assets/produits/lookbook-jogging.jpg"
  }
 ];
 const TAILLES = ["S","M","L","XL","XXL"];

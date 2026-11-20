@@ -16,7 +16,7 @@ try{
       PRODUITS.splice(0, PRODUITS.length, ...customData.produits);
     }
     if(Array.isArray(customData.lookbook)){
-      customData.lookbook.forEach((cl,i)=>{if(LOOKBOOK[i]&&cl.img!==undefined)LOOKBOOK[i].img=cl.img});
+      customData.lookbook.forEach((cl,i)=>{if(LOOKBOOK[i]&&cl.img)LOOKBOOK[i].img=cl.img});
     }
     if(customData.bandeau){
       const topEl=document.querySelector(".top");
