@@ -28,11 +28,19 @@
     <form id="authForm" class="auth-form">
       <div class="form-group">
         <label class="form-label" for="authEmail">Adresse e-mail</label>
-        <input type="email" id="authEmail" class="form-input" value="admin@silencework.sn" placeholder="admin@silencework.sn" required autocomplete="username">
+        <input type="email" id="authEmail" class="form-input" placeholder="admin@silencework.sn" required autocomplete="username">
       </div>
       <div class="form-group" style="margin-bottom:24px">
         <label class="form-label" for="authPassword">Mot de passe</label>
-        <input type="password" id="authPassword" class="form-input" value="silencework2026" placeholder="••••••••" required autocomplete="current-password">
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="password" id="authPassword" class="form-input" style="padding-right:42px" placeholder="••••••••" required autocomplete="current-password">
+          <button type="button" id="btnTogglePassword" style="position:absolute;right:10px;background:none;border:none;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;padding:4px" title="Afficher/Masquer le mot de passe" aria-label="Afficher ou masquer le mot de passe">
+            <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+          </button>
+        </div>
       </div>
       <button type="submit" id="btnSignIn" class="btn btn-primary" style="width:100%">
         Se connecter
