@@ -185,7 +185,7 @@ const server = http.createServer(async (req, res) => {
       const colsMatch = fileContent.match(/const HERO_COLS = (\[[\s\S]*?\]);/);
       const bandeauMatch = fileContent.match(/const BANDEAU = "([^"]+)";/);
 
-      const finalWa = whatsapp !== undefined ? whatsapp : (waMatch ? waMatch[1] : '221776336310');
+      const finalWa = whatsapp !== undefined ? whatsapp : (waMatch ? waMatch[1] : '+221776336310');
       const finalDevise = devise !== undefined ? devise : (devMatch ? devMatch[1] : 'FCFA');
       const finalHero = heroImg !== undefined ? heroImg : (heroMatch ? heroMatch[1] : '');
       const finalBandeau = bandeau !== undefined ? bandeau : (bandeauMatch ? bandeauMatch[1] : 'Livraison à Dakar · Paiement Wave, Orange Money ou à la livraison');

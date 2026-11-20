@@ -18,7 +18,7 @@
     categories: ['T-shirts', 'Hoodies', 'Joggings', 'Bonnets'],
     commandes: [],
     settings: {
-      whatsapp: '221776336310',
+      whatsapp: '+221776336310',
       bandeau: 'Livraison à Dakar · Paiement Wave, Orange Money ou à la livraison',
       devise: 'FCFA',
       supabaseUrl: 'https://atduzssibornspqxavur.supabase.co',

@@ -1,5 +1,5 @@
 /* ====== À PERSONNALISER ====== */
-const WHATSAPP = "221770000000";            // numéro de la marque, format international sans +
+const WHATSAPP = "+221776336310";            // numéro de la marque (+221 77 633 63 10)
 const DEVISE = "FCFA";
 const BANDEAU = "Livraison à Dakar · Paiement Wave, Orange Money ou à la livraison";
 const HERO_IMG = "assets/produits/silence-work-hero-3.jpg";                         // ex. "assets/produits/hero.jpg"
@@ -172,6 +172,7 @@ const PRODUITS = [
         "img": [
           "assets/produits/48ece4ad-6cef-4b87-9ab4-d4b3d67144ac-1794533720490.webp"
         ],
+        "og_img": "assets/produits/og-share-1794878722229-1794878722230.jpg",
         "stock": {
           "S": 5,
           "M": 5,
@@ -246,6 +247,7 @@ const PRODUITS = [
         "img": [
           "assets/produits/6b064c0a-5282-43b7-a681-fb90cc509c64-1794532195980.webp"
         ],
+        "og_img": "assets/produits/og-share-1794878744509-1794878744511.jpg",
         "stock": {
           "S": 5,
           "M": 5,
@@ -285,6 +287,7 @@ const PRODUITS = [
         "img": [
           "assets/produits/099e835d-1eac-4b2f-8f6a-cc4867dd9fa4-1794531652834.webp"
         ],
+        "og_img": "assets/produits/og-share-1794878653579-1794878653582.jpg",
         "stock": {
           "S": 5,
           "M": 5,

@@ -146,16 +146,20 @@ module.exports = async function handler(req, res) {
   let imageType = 'image/jpeg';
 
   if (rawImg) {
-    if (rawImg.startsWith('http://') || rawImg.startsWith('https://')) {
-      ogImageUrl = rawImg;
-    } else {
-      const cleanPath = rawImg.replace(/^\/+/, '');
-      ogImageUrl = `${siteUrl}/${cleanPath}`;
+    let resolvedUrl = rawImg;
+    if (!resolvedUrl.startsWith('http://') && !resolvedUrl.startsWith('https://')) {
+      const cleanPath = resolvedUrl.replace(/^\/+/, '');
+      resolvedUrl = `${siteUrl}/${cleanPath}`;
     }
 
-    if (ogImageUrl.endsWith('.png')) imageType = 'image/png';
-    else if (ogImageUrl.endsWith('.webp')) imageType = 'image/webp';
-    else imageType = 'image/jpeg';
+    // WhatsApp rejette les images WebP pour les aperçus Open Graph : il exige JPEG ou PNG
+    if (resolvedUrl.toLowerCase().endsWith('.webp')) {
+      ogImageUrl = `${siteUrl}/assets/og-default.jpg`;
+      imageType = 'image/jpeg';
+    } else {
+      ogImageUrl = resolvedUrl;
+      imageType = resolvedUrl.toLowerCase().endsWith('.png') ? 'image/png' : 'image/jpeg';
+    }
   }
 
   const targetUrl = `${siteUrl}/#/produit/${produit.id}/${safeColorIdx}`;

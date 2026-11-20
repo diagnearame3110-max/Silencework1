@@ -132,8 +132,8 @@ function majLb(){const p=G.p,c=curC(),l=imgs(c);$("#lbimg").innerHTML=vueHtml(p,
 const fermeLb=()=>{$("#lb").hidden=true;if(!$("#cart").classList.contains("on"))document.body.style.overflow=""};
 function getProdShareUrl(id, c) {
   let origin = (typeof window !== "undefined" && window.location && window.location.origin) ? window.location.origin : "";
-  if (!origin || origin === "null" || origin.startsWith("file:")) {
-    origin = "https://silencework.sn";
+  if (!origin || origin === "null" || origin.startsWith("file:") || origin.includes("localhost") || origin.includes("127.0.0.1") || origin.includes(":3000")) {
+    origin = "https://silence-work1.vercel.app";
   }
   return `${origin}/p/${id}?c=${c !== undefined ? c : 0}`;
 }
@@ -157,8 +157,9 @@ $("#pdp").addEventListener("click",e=>{
       const p = G.p, c = curC();
       const firstLink = getProdShareUrl(p.id, G.ci);
       const articleLine = `• ${G.qte} × ${p.nom} – ${c.nom} (taille ${G.sel}) – ${fmt(p.prix*G.qte)}\n  🔗 Voir l'article : ${firstLink}`;
-      const msg = `Bonjour Silence Work, je souhaite commander :\n${firstLink}\n\n${articleLine}\n\n💰 *Total : ${fmt(p.prix * G.qte)}*\n💳 *Paiement souhaité :* Wave / Orange Money (au 77 633 63 10) / à la livraison\n\nMerci de me confirmer la disponibilité !`;
-      window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank","noopener");return}
+      const cleanWa = (typeof WHATSAPP !== "undefined" ? WHATSAPP : "+221776336310").replace(/[^0-9]/g, "");
+      const msg = `${firstLink}\n\nBonjour Silence Work, je souhaite commander :\n\n${articleLine}\n\n💰 *Total : ${fmt(p.prix * G.qte)}*\n💳 *Paiement souhaité :* Wave / Orange Money (au +221 77 633 63 10) / à la livraison\n\nMerci de me confirmer la disponibilité !`;
+      window.open(`https://wa.me/${cleanWa}?text=${encodeURIComponent(msg)}`,"_blank","noopener");return}
     const id=G.p.id,c=G.ci,t=G.sel,l=panier.find(x=>x.id===id&&x.c===c&&x.t===t);
     l?l.q+=G.qte:panier.push({id,c,t,q:G.qte});
     G.qte=1;$("#qv").textContent="1";
@@ -200,9 +201,9 @@ function majPayInstruction(){
   if(!paySelect||!payBox)return;
   const v = paySelect.value;
   if(v.startsWith("Wave")){
-    payBox.innerHTML = '<strong>📱 Paiement Wave</strong>Effectue ton paiement au <span class="pay-num">77 633 63 10</span> (Silence Work). Nous confirmons la réception immédiatement.';
+    payBox.innerHTML = '<strong>📱 Paiement Wave</strong>Effectue ton paiement au <span class="pay-num">+221 77 633 63 10</span> (Silence Work). Nous confirmons la réception immédiatement.';
   } else if(v.startsWith("Orange")){
-    payBox.innerHTML = '<strong>🍊 Paiement Orange Money</strong>Envoie ton transfert au <span class="pay-num">77 633 63 10</span> (Silence Work).';
+    payBox.innerHTML = '<strong>🍊 Paiement Orange Money</strong>Envoie ton transfert au <span class="pay-num">+221 77 633 63 10</span> (Silence Work).';
   } else {
     payBox.innerHTML = '<strong>💵 Paiement à la livraison</strong>Règlement en espèces directement auprès du livreur lors de la livraison à Dakar.';
   }
@@ -273,10 +274,10 @@ $("#form").addEventListener("submit", async e => {
     return `• ${l.q} × ${p.nom} – ${c.nom} (taille ${l.t}) – ${fmt(p.prix * l.q)}\n  🔗 Voir l'article : ${url}`;
   }).join("\n");
 
-  const waNum = (typeof WHATSAPP !== "undefined" ? WHATSAPP : "221776336310");
-  const msg = `Bonjour Silence Work Sénégal, je passe une commande sur votre boutique :\n${firstLink}\n\n📋 *Commande n° ${numCmd}*\n${lignes}\n\n💰 *Total : ${fmt(montantTotal)}*\n💳 *Paiement :* ${modePaiement} (Numéro Silence Work : 77 633 63 10)\n\n👤 *Nom :* ${nom}\n📞 *Téléphone :* ${rawTel}\n📍 *Adresse de livraison :* ${adr}\n\nMerci de me confirmer la réception !`;
+  const cleanWa = (typeof WHATSAPP !== "undefined" ? WHATSAPP : "+221776336310").replace(/[^0-9]/g, "");
+  const msg = `${firstLink}\n\nBonjour Silence Work Sénégal, je passe une commande sur votre boutique :\n\n📋 *Commande n° ${numCmd}*\n${lignes}\n\n💰 *Total : ${fmt(montantTotal)}*\n💳 *Paiement :* ${modePaiement} (Numéro Silence Work : +221 77 633 63 10)\n\n👤 *Nom :* ${nom}\n📞 *Téléphone :* ${rawTel}\n📍 *Adresse de livraison :* ${adr}\n\nMerci de me confirmer la réception !`;
 
-  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`,"_blank","noopener");
+  window.open(`https://wa.me/${cleanWa}?text=${encodeURIComponent(msg)}`,"_blank","noopener");
 
   panier = [];
   save();
@@ -287,7 +288,8 @@ $("#form").addEventListener("submit", async e => {
 $("#nl").addEventListener("submit",e=>{
   e.preventDefault();
   const c=new FormData(e.target).get("c").trim();if(!c)return;
-  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Bonjour, je souhaite être informé(e) des nouveautés Silence Work : "+c)}`,"_blank","noopener");
+  const cleanWa = (typeof WHATSAPP !== "undefined" ? WHATSAPP : "+221776336310").replace(/[^0-9]/g, "");
+  window.open(`https://wa.me/${cleanWa}?text=${encodeURIComponent("Bonjour, je souhaite être informé(e) des nouveautés Silence Work : "+c)}`,"_blank","noopener");
 });
 function navTo(h,push){
   const m=h.match(/^#\/produit\/(\d+)(?:\/(\d+))?/), p=m&&prod(+m[1]);
@@ -306,10 +308,11 @@ if(activeHero && $("#hero") && $("#hero").style && $("#hero").style.setProperty)
 $("#tiles").innerHTML=LOOKBOOK.map(l=>`<a class="tile" href="https://www.instagram.com/silence.work_senegal/" target="_blank" rel="noopener"${l.img?` style="background-image:url(${l.img})"`:""}><span>${l.titre}</span></a>`).join("");
 $("#fcats").innerHTML=cats.slice(1).map(c=>`<li><a href="#boutique" data-f="${c}">${c}</a></li>`).join("");
 $("#fcats").addEventListener("click",e=>{const f=e.target.dataset.f;if(f){filtre=f;renderFiltres();renderGrille()}});
+const cleanGlobalWa = (typeof WHATSAPP !== "undefined" ? WHATSAPP : "+221776336310").replace(/[^0-9]/g, "");
 const waLink = $("#waLink");
-if(waLink) waLink.href = `https://wa.me/${WHATSAPP}`;
+if(waLink) waLink.href = `https://wa.me/${cleanGlobalWa}`;
 const waFloat = $("#waFloat");
-if(waFloat) waFloat.href = `https://wa.me/${WHATSAPP}`;
+if(waFloat) waFloat.href = `https://wa.me/${cleanGlobalWa}`;
 $("#yr").textContent=new Date().getFullYear();
 renderFiltres();renderGrille();renderPanier();
 /* ---- Full-Bleed 3-Column Hero Background ---- */
