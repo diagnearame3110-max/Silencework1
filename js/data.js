@@ -10,8 +10,8 @@ const HERO_COLS = [
 ];
 const LOOKBOOK = [
  {
-  "titre": "Les hoodies",
-  "img": "assets/produits/lookbook-hoodie.jpg"
+  "titre": "Les pulls",
+  "img": "assets/produits/lookbook-pull.jpg"
  },
  {
   "titre": "Les t-shirts graffiti",
@@ -71,7 +71,7 @@ const PRODUITS = [
   {
     "id": 1794878899128,
     "nom": "Pull",
-    "cat": "Hoodies",
+    "cat": "Pulls",
     "prix": 15000,
     "ancien": 18000,
     "desc": "Concu pour l'hiver",
@@ -222,7 +222,7 @@ const PRODUITS = [
   {
     "id": 1794531820903,
     "nom": "PILL NOIRR",
-    "cat": "Hoodies",
+    "cat": "Pulls",
     "prix": 9000,
     "ancien": null,
     "desc": "",
@@ -262,7 +262,7 @@ const PRODUITS = [
   {
     "id": 1794531592969,
     "nom": "XXXXXX",
-    "cat": "Hoodies",
+    "cat": "Pulls",
     "prix": 9000,
     "ancien": null,
     "desc": "",

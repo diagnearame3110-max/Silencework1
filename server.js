@@ -194,7 +194,7 @@ const server = http.createServer(async (req, res) => {
         "assets/produits/silence-work-hero-3.jpg",
         "assets/produits/silence-work-hero-2.jpg"
       ]);
-      const finalLookbook = lookbook || [{ titre: 'Les hoodies', img: '' }, { titre: 'Les t-shirts graffiti', img: '' }, { titre: 'Le jogging noir', img: '' }];
+      const finalLookbook = lookbook || [{ titre: 'Les pulls', img: '' }, { titre: 'Les t-shirts graffiti', img: '' }, { titre: 'Le jogging noir', img: '' }];
       const finalTailles = tailles || ['S', 'M', 'L', 'XL', 'XXL'];
 
       // Format clean data.js

@@ -126,7 +126,7 @@ CREATE POLICY "Suppression photos par admin" ON storage.objects
 -- 9. DONNÉES INITIALES (CATÉGORIES & PARAMÈTRES SILENCE WORK)
 INSERT INTO public.categories (nom, ordre) VALUES
     ('T-shirts', 1),
-    ('Hoodies', 2),
+    ('Pulls', 2),
     ('Joggings', 3),
     ('Bonnets', 4)
 ON CONFLICT (nom) DO NOTHING;

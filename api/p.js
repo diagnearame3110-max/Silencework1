@@ -97,7 +97,7 @@ module.exports = async function handler(req, res) {
   // Si le produit n'existe pas, redirection vers l'accueil avec Open Graph par défaut
   if (!produit) {
     const defaultTitle = 'Silence Work Sénégal – Streetwear à Dakar';
-    const defaultDesc = 'T-shirts, hoodies et joggings Silence Work. Créations streetwear uniques et confortables créées à Dakar.';
+    const defaultDesc = 'T-shirts, pulls et joggings Silence Work. Créations streetwear uniques et confortables créées à Dakar.';
     const defaultImg = `${siteUrl}/assets/og-default.jpg`;
     const homeUrl = `${siteUrl}/`;
 

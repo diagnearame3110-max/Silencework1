@@ -15,7 +15,7 @@
     isLocalServerOnline: false,
     activeView: 'dashboard',
     produits: [],
-    categories: ['T-shirts', 'Hoodies', 'Joggings', 'Bonnets'],
+    categories: ['T-shirts', 'Pulls', 'Joggings', 'Bonnets'],
     commandes: [],
     settings: {
       whatsapp: '+221776336310',
@@ -386,7 +386,7 @@
           paiement_mode: 'Orange Money',
           created_at: new Date(Date.now() - 3600000 * 8).toISOString(),
           articles: [
-            { nom: 'Hoodie Silence Work', couleur: 'Crème', taille: 'M', quantite: 1, prix: 25000 }
+            { nom: 'Pull Silence Work', couleur: 'Crème', taille: 'M', quantite: 1, prix: 25000 }
           ]
         }
       ];
